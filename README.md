@@ -218,6 +218,8 @@ Test Summary: 3 successful, 0 failures, 0 skipped
 
 </details>
 
+... 7 seconds for the full test lifecycle. Nice.
+
 ## Notes
 
 I'm using my custom fork of the kitchen-docker gem because it supports the docker transport and I find that convenient, although the driver needs a general overhaul that I have never found the time to write. 
