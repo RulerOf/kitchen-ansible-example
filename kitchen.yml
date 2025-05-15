@@ -1,0 +1,60 @@
+---
+driver:
+  name: docker
+  # Required by Systemd
+  privileged: true
+  run_options:
+    env: container=docker
+    stop-signal: SIGRTMIN+3
+    tmpfs:
+      # - /tmp
+      - /run
+
+transport:
+  name: docker
+
+provisioner:
+  name: ansible_playbook
+  playbook: main.yml
+  ## These two lines are necessary to download the playbooks from galaxy,
+  ## but if you embed all the deps it converges 20s faster
+  #requirements_path: ./roles/requirements.yml
+  #requirements_collection_path: ./collections/requirements.yml
+  ## If you use tasks/collections inside of your playbook, you need to set this,
+  ## otherwise kitchen-ansible won't copy them into the instance
+  additional_copy_path:
+    - ./tasks
+    - ./collections
+  roles_path: roles
+  hosts: all
+  ansible_binary_path: /usr/local/bin # required for pip3-based install
+  ansible_verbose: true
+  ansible_verbosity: 1
+  ansible_version: latest
+  require_chef_for_busser: false
+
+
+platforms:
+  - name: rockylinux-9
+    driver_config:
+      image: dokken/rockylinux-9
+      run_command: /usr/lib/systemd/systemd
+      provision_command:
+        # Install ansible in the Dockerfile to leverage layer cache
+        - yum -y install python3 python3-pip
+        - python3 -m pip install --upgrade pip
+        - LC_ALL="en_US.UTF-8" python3 -m pip install ansible
+
+verifier:
+  name: inspec
+  sudo: true
+  reporter:
+    - cli
+  inspec_tests:
+    - path: test/integration/default
+
+suites:
+  - name: default
+    provisioner:
+      ## Configure ansible extra vars here if you need them
+      # extra_vars:

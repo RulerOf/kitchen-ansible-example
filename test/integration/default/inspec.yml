@@ -1,0 +1,8 @@
+name: kitchen-ansible-example
+title: Test Kitchen Ansible Example
+version: 0.0.1
+
+inputs:
+  - name: services
+    value: 
+      - sshd

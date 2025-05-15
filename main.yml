@@ -1,0 +1,10 @@
+---
+- name: Kitchen-Ansible Example
+  hosts: all
+  serial: 1
+  become: true
+
+  tasks:
+    - name: Greet the user
+      ansible.builtin.debug:
+        msg: "Hello, World! This is a test run of Ansible using kitchen-ansible gem."
